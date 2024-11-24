@@ -58,3 +58,4 @@ jobs:
           provenance: false
           tags: |-
             ghcr.io/wurly200a/builder-esp32/${{ matrix.target }}:${{ github.sha }}
+            ghcr.io/wurly200a/builder-esp32/${{ matrix.target }}:latest
