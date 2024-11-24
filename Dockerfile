@@ -33,12 +33,14 @@ FROM base AS esp-idf-v5.3
 ARG ESP_IDF_VERSION=v5.3.1
 RUN cd /opt && git clone -b ${ESP_IDF_VERSION} --recursive https://github.com/espressif/esp-idf.git
 
+USER ${USER_NAME}
+
 # ESP-IDF Set up the tools
 RUN cd /opt/esp-idf && ./install.sh esp32
 
 ## Set Prompt
-RUN echo PS1="'(docker)esp-idf-${ESP_IDF_VERSION}:\w${PS1}'" >> /root/.bashrc
-RUN echo "export IDF_PATH=/opt/esp-idf" >> /root/.bashrc
+RUN echo PS1="'(docker)esp-idf-${ESP_IDF_VERSION}:\w${PS1}'" >> ~/.bashrc
+RUN echo "export IDF_PATH=/opt/esp-idf" >> ~/.bashrc
 
 FROM base AS esp-idf-v5.2
 
@@ -46,9 +48,11 @@ FROM base AS esp-idf-v5.2
 ARG ESP_IDF_VERSION=v5.2.3
 RUN cd /opt && git clone -b ${ESP_IDF_VERSION} --recursive https://github.com/espressif/esp-idf.git
 
+USER ${USER_NAME}
+
 # ESP-IDF Set up the tools
 RUN cd /opt/esp-idf && ./install.sh esp32
 
 ## Set Prompt
-RUN echo PS1="'(docker)esp-idf-${ESP_IDF_VERSION}:\w${PS1}'" >> /root/.bashrc
-RUN echo "export IDF_PATH=/opt/esp-idf" >> /root/.bashrc
+RUN echo PS1="'(docker)esp-idf-${ESP_IDF_VERSION}:\w${PS1}'" >> ~/.bashrc
+RUN echo "export IDF_PATH=/opt/esp-idf" >> ~/.bashrc
