@@ -27,6 +27,9 @@ RUN apt install -y gcc-arm-none-eabi binutils-arm-none-eabi
 # ESP-IDF Prerequisites
 RUN apt install -y git wget flex bison gperf python3 python3-venv cmake ninja-build ccache libffi-dev libssl-dev dfu-util libusb-1.0-0
 
+# Other
+RUN apt install -y clangd
+
 FROM base AS esp-idf-v5.3
 
 # Get ESP-IDF
