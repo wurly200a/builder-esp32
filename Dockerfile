@@ -3,6 +3,8 @@ FROM ubuntu:24.04 AS base
 ARG USER_NAME="ubuntu"
 ARG GROUP_NAME="ubuntu"
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
 # basic
 RUN apt update -y
 
