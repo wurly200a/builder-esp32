@@ -33,7 +33,7 @@ RUN echo 'export BASH_ENV="$HOME/.bashrc"' > /etc/profile.d/bashenv.sh
 USER ${USER_NAME}
 
 # ESP-IDF Set up the tools
-RUN cd /opt/esp-idf && ./install.sh esp32 && ./tools/idf_tools.py install esp-clang
+RUN cd /opt/esp-idf && ./install.sh esp32 && python3 ./tools/idf_tools.py install esp-clang
 
 RUN echo "export IDF_PATH=/opt/esp-idf" >> /home/${USER_NAME}/.bashrc && \
     echo "source /opt/esp-idf/export.sh" >> /home/${USER_NAME}/.bashrc && \
@@ -49,7 +49,7 @@ RUN echo 'export BASH_ENV="$HOME/.bashrc"' > /etc/profile.d/bashenv.sh
 USER ${USER_NAME}
 
 # ESP-IDF Set up the tools
-RUN cd /opt/esp-idf && ./install.sh esp32 && ./tools/idf_tools.py install esp-clang
+RUN cd /opt/esp-idf && ./install.sh esp32 && python3 ./tools/idf_tools.py install esp-clang
 
 RUN echo "export IDF_PATH=/opt/esp-idf" >> /home/${USER_NAME}/.bashrc && \
     echo "source /opt/esp-idf/export.sh" >> /home/${USER_NAME}/.bashrc && \
