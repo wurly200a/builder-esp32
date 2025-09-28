@@ -41,9 +41,9 @@ USER ${USER_NAME}
 # ESP-IDF Set up the tools
 RUN cd /opt/esp-idf && ./install.sh esp32
 
-## Set Prompt
-RUN echo PS1="'(docker)esp-idf-${ESP_IDF_VERSION}:\w${PS1}'" >> ~/.bashrc
-RUN echo "export IDF_PATH=/opt/esp-idf" >> ~/.bashrc
+RUN echo "export IDF_PATH=/opt/esp-idf" >> /home/${USER_NAME}/.bashrc && \
+    echo "source /opt/esp-idf/export.sh" >> /home/${USER_NAME}/.bashrc && \
+    echo "PS1='(docker)esp-idf-${ESP_IDF_VERSION}:\w${PS1}'" >> /home/${USER_NAME}/.bashrc
 
 FROM base AS esp-idf-v5.2
 
