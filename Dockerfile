@@ -6,10 +6,6 @@ ARG GROUP_NAME="ubuntu"
 # basic
 RUN apt update -y
 
-# add user and group
-RUN groupadd ${GROUP_NAME}
-RUN useradd -g ${GROUP_NAME} -m ${USER_NAME}
-
 # NuttX Prerequisites
 RUN apt install -y \
     bison flex gettext texinfo libncurses5-dev libncursesw5-dev xxd \
