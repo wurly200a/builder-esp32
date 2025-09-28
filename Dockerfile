@@ -30,7 +30,18 @@ FROM base AS esp-idf-v5.3
 # Get ESP-IDF
 ARG ESP_IDF_VERSION=v5.3.1
 RUN cd /opt && git clone -b ${ESP_IDF_VERSION} --recursive https://github.com/espressif/esp-idf.git
-RUN echo 'export BASH_ENV="$HOME/.bashrc"' > /etc/profile.d/bashenv.sh
+
+RUN tee /etc/profile.d/esp-idf.sh >/dev/null <<'EOF'
+export IDF_PATH=/opt/esp-idf
+[ -r /opt/esp-idf/export.sh ] && . /opt/esp-idf/export.sh >/dev/null 2>&1 || :
+for d in "$HOME/.espressif/tools/esp-clang"/*/esp-clang/bin \
+         "$HOME/.espressif/tools/xtensa-esp-elf"/*/xtensa-esp32s3-elf/bin
+do
+  [ -d "$d" ] || continue
+  case ":$PATH:" in *":$d:"*) ;; *) PATH="$d:$PATH";; esac
+done
+export PATH
+EOF
 
 USER ${USER_NAME}
 
@@ -46,7 +57,18 @@ FROM base AS esp-idf-v5.2
 # Get ESP-IDF
 ARG ESP_IDF_VERSION=v5.2.3
 RUN cd /opt && git clone -b ${ESP_IDF_VERSION} --recursive https://github.com/espressif/esp-idf.git
-RUN echo 'export BASH_ENV="$HOME/.bashrc"' > /etc/profile.d/bashenv.sh
+
+RUN tee /etc/profile.d/esp-idf.sh >/dev/null <<'EOF'
+export IDF_PATH=/opt/esp-idf
+[ -r /opt/esp-idf/export.sh ] && . /opt/esp-idf/export.sh >/dev/null 2>&1 || :
+for d in "$HOME/.espressif/tools/esp-clang"/*/esp-clang/bin \
+         "$HOME/.espressif/tools/xtensa-esp-elf"/*/xtensa-esp32s3-elf/bin
+do
+  [ -d "$d" ] || continue
+  case ":$PATH:" in *":$d:"*) ;; *) PATH="$d:$PATH";; esac
+done
+export PATH
+EOF
 
 USER ${USER_NAME}
 
