@@ -1,7 +1,7 @@
 FROM ubuntu:24.04 AS base
 
-ARG USER_NAME="builder"
-ARG GROUP_NAME="builder"
+ARG USER_NAME="ubuntu"
+ARG GROUP_NAME="ubuntu"
 
 # basic
 RUN apt update -y
