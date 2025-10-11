@@ -38,6 +38,17 @@ RUN echo "export IDF_PATH=/opt/esp-idf" >> /home/${USER_NAME}/.bashrc && \
     echo "source /opt/esp-idf/export.sh" >> /home/${USER_NAME}/.bashrc && \
     echo "PS1='(docker)esp-idf-${ESP_IDF_VERSION}:\w${PS1}'" >> /home/${USER_NAME}/.bashrc
 
+USER root
+RUN set -e; \
+    cat > /usr/local/bin/clangd-with-idf <<'EOF' && chmod +x /usr/local/bin/clangd-with-idf
+#!/usr/bin/env bash
+set -euo pipefail
+# Load ESP-IDF environment (adds esp-clang/clangd to PATH)
+source /opt/esp-idf/export.sh >/dev/null 2>&1
+exec clangd --background-index --header-insertion-decorators=0 "$@"
+EOF
+USER ${USER_NAME}
+
 FROM base AS esp-idf-v5.2
 
 # Get ESP-IDF
@@ -52,3 +63,17 @@ RUN cd /opt/esp-idf && ./install.sh esp32 && python3 ./tools/idf_tools.py instal
 RUN echo "export IDF_PATH=/opt/esp-idf" >> /home/${USER_NAME}/.bashrc && \
     echo "source /opt/esp-idf/export.sh" >> /home/${USER_NAME}/.bashrc && \
     echo "PS1='(docker)esp-idf-${ESP_IDF_VERSION}:\w${PS1}'" >> /home/${USER_NAME}/.bashrc
+
+USER root
+RUN set -e; \
+    cat > /usr/local/bin/clangd-with-idf <<'EOF' && chmod +x /usr/local/bin/clangd-with-idf
+#!/usr/bin/env bash
+set -euo pipefail
+# Load ESP-IDF environment (adds esp-clang/clangd to PATH)
+source /opt/esp-idf/export.sh >/dev/null 2>&1
+#LOG=/workspaces/ESP32-S3-Touch-LCD-2_8/.clangd.log
+LOG=/tmp/clangd.log
+: > "$LOG" || { echo "cannot write $LOG" >&2; exit 1; }
+exec clangd --background-index --header-insertion-decorators=0 --query-driver="/home/*/.espressif/tools/*/*/bin/*,/opt/esp-idf/tools/*/*/bin/*,/usr/bin/*" "$@" --log=verbose 2>>"$LOG"
+EOF
+USER ${USER_NAME}
