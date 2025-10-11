@@ -38,6 +38,33 @@ RUN echo "export IDF_PATH=/opt/esp-idf" >> /home/${USER_NAME}/.bashrc && \
     echo "source /opt/esp-idf/export.sh" >> /home/${USER_NAME}/.bashrc && \
     echo "PS1='(docker)esp-idf-${ESP_IDF_VERSION}:\w${PS1}'" >> /home/${USER_NAME}/.bashrc
 
+USER root
+RUN set -eux; \
+  cat >/usr/local/bin/espidf-entrypoint.sh <<'EOF' && chmod +x /usr/local/bin/espidf-entrypoint.sh
+#!/usr/bin/env bash
+set -e
+# Always load ESP-IDF environment (PATH, tools, etc.)
+if [ -f /opt/esp-idf/export.sh ]; then
+  # shellcheck disable=SC1091
+  source /opt/esp-idf/export.sh >/dev/null 2>&1 || true
+fi
+# Ensure clangd is reachable even if not on PATH yet
+if ! command -v clangd >/dev/null 2>&1; then
+  for p in \
+    /home/*/.espressif/tools/esp-clang/*/esp-clang/bin/clangd \
+    /opt/esp-idf/tools/llvm/bin/clangd \
+    /usr/local/bin/clangd /usr/bin/clangd; do
+    if [ -x "$p" ]; then
+      export PATH="$(dirname "$p"):$PATH"
+      break
+    fi
+  done
+fi
+exec "$@"
+EOF
+ENTRYPOINT ["/usr/local/bin/espidf-entrypoint.sh"]
+USER ${USER_NAME}
+
 FROM base AS esp-idf-v5.2
 
 # Get ESP-IDF
@@ -52,3 +79,27 @@ RUN cd /opt/esp-idf && ./install.sh esp32 && python3 ./tools/idf_tools.py instal
 RUN echo "export IDF_PATH=/opt/esp-idf" >> /home/${USER_NAME}/.bashrc && \
     echo "source /opt/esp-idf/export.sh" >> /home/${USER_NAME}/.bashrc && \
     echo "PS1='(docker)esp-idf-${ESP_IDF_VERSION}:\w${PS1}'" >> /home/${USER_NAME}/.bashrc
+
+USER root
+RUN set -eux; \
+  cat >/usr/local/bin/espidf-entrypoint.sh <<'EOF' && chmod +x /usr/local/bin/espidf-entrypoint.sh
+#!/usr/bin/env bash
+set -e
+if [ -f /opt/esp-idf/export.sh ]; then
+  source /opt/esp-idf/export.sh >/dev/null 2>&1 || true
+fi
+if ! command -v clangd >/dev/null 2>&1; then
+  for p in \
+    /home/*/.espressif/tools/esp-clang/*/esp-clang/bin/clangd \
+    /opt/esp-idf/tools/llvm/bin/clangd \
+    /usr/local/bin/clangd /usr/bin/clangd; do
+    if [ -x "$p" ]; then
+      export PATH="$(dirname "$p"):$PATH"
+      break
+    fi
+  done
+fi
+exec "$@"
+EOF
+ENTRYPOINT ["/usr/local/bin/espidf-entrypoint.sh"]
+USER ${USER_NAME}
