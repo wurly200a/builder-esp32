@@ -45,7 +45,9 @@ RUN set -e; \
 set -euo pipefail
 # Load ESP-IDF environment (adds esp-clang/clangd to PATH)
 source /opt/esp-idf/export.sh >/dev/null 2>&1
-exec clangd --background-index --header-insertion-decorators=0 "$@"
+LOG=/tmp/clangd.log
+: > "$LOG" || { echo "cannot write $LOG" >&2; exit 1; }
+exec clangd --background-index --header-insertion-decorators=0 --query-driver="/home/*/.espressif/tools/*/*/bin/*,/opt/esp-idf/tools/*/*/bin/*,/usr/bin/*" "$@" --log=verbose 2>>"$LOG"
 EOF
 USER ${USER_NAME}
 
@@ -71,7 +73,6 @@ RUN set -e; \
 set -euo pipefail
 # Load ESP-IDF environment (adds esp-clang/clangd to PATH)
 source /opt/esp-idf/export.sh >/dev/null 2>&1
-#LOG=/workspaces/ESP32-S3-Touch-LCD-2_8/.clangd.log
 LOG=/tmp/clangd.log
 : > "$LOG" || { echo "cannot write $LOG" >&2; exit 1; }
 exec clangd --background-index --header-insertion-decorators=0 --query-driver="/home/*/.espressif/tools/*/*/bin/*,/opt/esp-idf/tools/*/*/bin/*,/usr/bin/*" "$@" --log=verbose 2>>"$LOG"
