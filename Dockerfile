@@ -35,7 +35,20 @@ USER ${USER_NAME}
 RUN cd /opt/esp-idf && ./install.sh esp32 && python3 ./tools/idf_tools.py install esp-clang
 
 USER root
-RUN bash -lc 'source /opt/esp-idf/export.sh >/dev/null 2>&1 || true; CLANGD=$(command -v clangd || true); if [ -n "$CLANGD" ]; then ln -sf "$CLANGD" /usr/local/bin/clangd; else echo "clangd not found during build" >&2; exit 1; fi'
+RUN bash -lc '\
+  set -e; \
+  CLANGD=$(su - '"${USER_NAME}"' -c "bash -lc '\''source /opt/esp-idf/export.sh >/dev/null 2>&1 || true; command -v clangd || true'\''"); \
+  if [ -z \"$CLANGD\" ]; then \
+    shopt -s nullglob; \
+    for p in /home/'"${USER_NAME}"'/.espressif/tools/esp-clang/*/esp-clang/bin/clangd /opt/esp-idf/tools/llvm/bin/clangd; do \
+      [ -x \"$p\" ] && CLANGD=\"$p\" && break; \
+    done; \
+  fi; \
+  if [ -n \"$CLANGD\" ]; then \
+    ln -sf \"$CLANGD\" /usr/local/bin/clangd; \
+  else \
+    echo \"clangd not found during build\" >&2; exit 1; \
+  fi'
 USER ${USER_NAME}
 
 RUN echo "export IDF_PATH=/opt/esp-idf" >> /home/${USER_NAME}/.bashrc && \
@@ -54,7 +67,20 @@ USER ${USER_NAME}
 RUN cd /opt/esp-idf && ./install.sh esp32 && python3 ./tools/idf_tools.py install esp-clang
 
 USER root
-RUN bash -lc 'source /opt/esp-idf/export.sh >/dev/null 2>&1 || true; CLANGD=$(command -v clangd || true); if [ -n "$CLANGD" ]; then ln -sf "$CLANGD" /usr/local/bin/clangd; else echo "clangd not found during build" >&2; exit 1; fi'
+RUN bash -lc '\
+  set -e; \
+  CLANGD=$(su - '"${USER_NAME}"' -c "bash -lc '\''source /opt/esp-idf/export.sh >/dev/null 2>&1 || true; command -v clangd || true'\''"); \
+  if [ -z \"$CLANGD\" ]; then \
+    shopt -s nullglob; \
+    for p in /home/'"${USER_NAME}"'/.espressif/tools/esp-clang/*/esp-clang/bin/clangd /opt/esp-idf/tools/llvm/bin/clangd; do \
+      [ -x \"$p\" ] && CLANGD=\"$p\" && break; \
+    done; \
+  fi; \
+  if [ -n \"$CLANGD\" ]; then \
+    ln -sf \"$CLANGD\" /usr/local/bin/clangd; \
+  else \
+    echo \"clangd not found during build\" >&2; exit 1; \
+  fi'
 USER ${USER_NAME}
 
 RUN echo "export IDF_PATH=/opt/esp-idf" >> /home/${USER_NAME}/.bashrc && \
