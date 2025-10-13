@@ -116,7 +116,7 @@ exec clangd --background-index --header-insertion-decorators=0 --query-driver="/
 EOF
 USER ${USER_NAME}
 
-FROM esp-idf-v5.2 AS esp-idf-v5.2-nuttx
+FROM esp-idf-v5.3 AS esp-idf-v5.3-nuttx
 
 USER root
 
