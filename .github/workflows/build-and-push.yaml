@@ -21,6 +21,7 @@ jobs:
           - esp-idf-v4.4
           - esp-idf-v5.2
           - esp-idf-v5.3
+          - esp-idf-v5.5
 
     steps:
       - uses: actions/checkout@v4
