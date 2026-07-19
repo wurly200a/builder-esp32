@@ -1,0 +1,7 @@
+{
+  "_comment": "Patch versions to build per ESP-IDF minor family. The LAST entry in each array is the one aliased to the family's ':latest' tag. Earlier entries are treated as immutable once published (never rebuilt).",
+  "esp-idf-v4.4": ["4.4.5"],
+  "esp-idf-v5.2": ["5.2.3"],
+  "esp-idf-v5.3": ["5.3.1"],
+  "esp-idf-v5.5": ["5.5.1", "5.5.5"]
+}
