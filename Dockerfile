@@ -173,6 +173,10 @@ else
 fi
 EOF
 
+# bash -l は ~/.profile 経由で ~/.bashrc も読み込み、そちらの既定 PS1 で
+# 上書きされてしまうため、確実に最後に勝つよう .bashrc の末尾にも追記する
+RUN echo "PS1='(docker)esp-idf-${ESP_IDF_VERSION}:\w\$ '" >> /home/${USER_NAME}/.bashrc
+
 # 最終 USER は root のまま (entrypoint が gosu で降格する)
 USER root
 
@@ -204,6 +208,10 @@ else
 fi
 EOF
 
+# bash -l は ~/.profile 経由で ~/.bashrc も読み込み、そちらの既定 PS1 で
+# 上書きされてしまうため、確実に最後に勝つよう .bashrc の末尾にも追記する
+RUN echo "PS1='(docker)esp-idf-${ESP_IDF_VERSION}:\w\$ '" >> /home/${USER_NAME}/.bashrc
+
 USER root
 
 
@@ -233,6 +241,10 @@ else
     . /opt/esp-idf/export.sh >/dev/null 2>&1
 fi
 EOF
+
+# bash -l は ~/.profile 経由で ~/.bashrc も読み込み、そちらの既定 PS1 で
+# 上書きされてしまうため、確実に最後に勝つよう .bashrc の末尾にも追記する
+RUN echo "PS1='(docker)esp-idf-${ESP_IDF_VERSION}:\w\$ '" >> /home/${USER_NAME}/.bashrc
 
 USER root
 
@@ -264,6 +276,10 @@ else
 fi
 EOF
 
+# bash -l は ~/.profile 経由で ~/.bashrc も読み込み、そちらの既定 PS1 で
+# 上書きされてしまうため、確実に最後に勝つよう .bashrc の末尾にも追記する
+RUN echo "PS1='(docker)esp-idf-${ESP_IDF_VERSION}:\w\$ '" >> /home/${USER_NAME}/.bashrc
+
 USER root
 
 
@@ -293,5 +309,9 @@ else
     . /opt/esp-idf/export.sh >/dev/null 2>&1
 fi
 EOF
+
+# bash -l は ~/.profile 経由で ~/.bashrc も読み込み、そちらの既定 PS1 で
+# 上書きされてしまうため、確実に最後に勝つよう .bashrc の末尾にも追記する
+RUN echo "PS1='(docker)esp-idf-${ESP_IDF_VERSION}:\w\$ '" >> /home/${USER_NAME}/.bashrc
 
 USER root
