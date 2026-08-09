@@ -5,6 +5,12 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      force_rebuild:
+        description: "Rebuild and overwrite already-published tags (bypasses the immutability guard)"
+        type: boolean
+        default: false
 
 concurrency:
   group: ${{ github.workflow }} @ build-push-${{ github.ref }}
@@ -61,12 +67,17 @@ jobs:
         id: check
         if: github.event_name != 'pull_request'
         run: |
-          IMAGE="${{ env.IMAGE_BASE }}/${{ matrix.family }}:${{ matrix.version }}"
-          if docker buildx imagetools inspect "$IMAGE" > /dev/null 2>&1; then
-            echo "Already published: $IMAGE (skipping build)"
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-          else
+          if [ "${{ github.event.inputs.force_rebuild }}" = "true" ]; then
+            echo "Force rebuild requested (bypassing already-published check)"
             echo "exists=false" >> "$GITHUB_OUTPUT"
+          else
+            IMAGE="${{ env.IMAGE_BASE }}/${{ matrix.family }}:${{ matrix.version }}"
+            if docker buildx imagetools inspect "$IMAGE" > /dev/null 2>&1; then
+              echo "Already published: $IMAGE (skipping build)"
+              echo "exists=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "exists=false" >> "$GITHUB_OUTPUT"
+            fi
           fi
 
       # Pull requests only validate that the build still succeeds; nothing is pushed.
