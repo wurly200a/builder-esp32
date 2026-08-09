@@ -5,12 +5,15 @@
 # 変更点:
 #   1. ツール類を $HOME/.espressif ではなく /opt/espressif に配置 (IDF_TOOLS_PATH)
 #   2. 起動時に entrypoint がコンテナ内 ubuntu ユーザーの UID/GID を
-#      マウント先 (/workspaces) の所有者に合わせる (gosu)
+#      カレントディレクトリ (-w で指定した場所) の所有者に合わせる (gosu)
 #   3. 環境設定を ~/.bashrc ではなく /etc/profile.d/ に配置
 #   4. 最終 USER は root のまま (entrypoint が gosu で降格する)
 #
 # 使い方:
 #   docker run --rm -it -v ${PWD}:/workspaces -w /workspaces <image>
+#   プロジェクト名付きのサブディレクトリにマウントしても良い。
+#   その場合は -v の行き先と -w を必ず同じパスに揃えること:
+#     docker run --rm -it -v ${PWD}:/workspaces/myproj -w /workspaces/myproj <image>
 #   ※ --user は付けないこと
 #
 
@@ -74,9 +77,11 @@ RUN set -e; \
 set -e
 
 USER_NAME="${CONTAINER_USER:-ubuntu}"
-REF_DIR="${UID_SOURCE_DIR:-/workspaces}"
+# 既定は起動時のカレントディレクトリ (= docker run の -w で渡された場所) の
+# 所有者に合わせる。-v/-w を同じパスに揃えてさえいれば、マウント先が
+# /workspaces 直下でもプロジェクト名付きサブディレクトリでも正しく検出できる。
+REF_DIR="${UID_SOURCE_DIR:-$PWD}"
 
-# 既定はマウント先ディレクトリの所有者に合わせる
 if [ -e "$REF_DIR" ]; then
     TARGET_UID="$(stat -c '%u' "$REF_DIR")"
     TARGET_GID="$(stat -c '%g' "$REF_DIR")"
